@@ -1,0 +1,75 @@
+$ python scripts/analyze_patching.py --results-dir results/exp2_cache_patching
+
+=== H2O-Lightning-4B (32 layers)
+skill     kept     read layer [95% CI]   absorb layer [95% CI]  per-pair read median (IQR)
+text       199     7.0 [  7.0,  7.1]          7.4 [  7.3,  7.5]         7.0 (7.0-7.1)
+spatial    195    11.4 [ 11.4, 11.5]         11.3 [ 11.2, 11.3]        11.3 (11.2-11.8)
+presence   200    14.5 [ 14.4, 14.5]         10.8 [ 10.8, 10.8]        14.5 (14.4-14.7)
+count      126    14.9 [ 14.8, 15.0]         14.7 [ 14.6, 14.7]        15.0 (14.6-15.2)
+
+=== Qwen3.5-4B (base) (32 layers)
+skill     kept     read layer [95% CI]   absorb layer [95% CI]  per-pair read median (IQR)
+text       198     6.9 [  6.9,  7.0]          7.2 [  7.1,  7.2]         7.0 (6.8-7.1)
+spatial    180    11.5 [ 11.5, 11.6]         11.3 [ 11.3, 11.4]        11.5 (11.2-11.9)
+presence   200    11.6 [ 11.6, 11.6]         10.8 [ 10.8, 10.8]        11.6 (11.5-11.8)
+count       61    14.0 [ 12.0, 14.3]         14.2 [ 14.1, 14.4]        13.0 (11.7-14.5)
+
+=== Visual-Jev-4B (36 layers)
+skill     kept     read layer [95% CI]   absorb layer [95% CI]  per-pair read median (IQR)
+text       198     9.7 [  9.5, 10.0]         10.8 [ 10.5, 11.0]         9.6 (8.9-11.1)
+spatial    194    17.4 [ 17.1, 17.7]         17.2 [ 16.8, 17.5]        17.3 (16.0-18.4)
+presence   200    18.7 [ 18.7, 18.7]         13.5 [ 13.4, 13.6]        18.7 (18.7-18.8)
+count       60    18.6 [ 18.4, 18.8]         18.8 [ 18.7, 18.9]        18.7 (18.2-19.0)
+
+=== Qwen3-VL-4B (base) (36 layers)
+skill     kept     read layer [95% CI]   absorb layer [95% CI]  per-pair read median (IQR)
+text       198     9.5 [  9.3,  9.7]         10.7 [ 10.4, 11.0]         9.3 (8.7-10.8)
+spatial    193    17.8 [ 17.5, 18.0]         15.7 [ 15.6, 15.8]        18.0 (16.9-18.4)
+presence   200    18.7 [ 18.7, 18.7]         13.1 [ 13.1, 13.1]        18.7 (18.7-18.8)
+count       96    18.2 [ 17.9, 18.3]         17.4 [ 17.0, 17.8]        18.3 (17.0-18.7)
+
+=== Paired: H2O-Lightning-4B minus Qwen3.5-4B (base), on pairs kept by both (read layer of the mean curve)
+text      n=197  difference = +0.1 layers  [+0.1, +0.2]
+spatial   n=177  difference = -0.1 layers  [-0.2, -0.0]
+presence  n=200  difference = +2.9 layers  [+2.8, +2.9]
+count     n= 41  difference = +1.7 layers  [+0.7, +3.0]
+
+=== Paired: Visual-Jev-4B minus Qwen3-VL-4B (base), on pairs kept by both (read layer of the mean curve)
+text      n=197  difference = +0.2 layers  [+0.1, +0.3]
+spatial   n=189  difference = -0.4 layers  [-0.6, -0.2]
+presence  n=200  difference = +0.0 layers  [+0.0, +0.0]
+count     n= 24  difference = -0.3 layers  [-0.6, -0.2]
+
+=== Depth after which the image is no longer read (all skills: mean late-cache effect <= 0.02)
+H2O-Lightning-4B     from layer 20 of 32 (62% of depth); largest mean effect at mid-depth (layer 16): 0.20
+Qwen3.5-4B (base)    from layer 16 of 32 (50% of depth); largest mean effect at mid-depth (layer 16): 0.02
+Visual-Jev-4B        from layer 22 of 36 (61% of depth); largest mean effect at mid-depth (layer 18): 0.78
+Qwen3-VL-4B (base)   from layer 22 of 36 (61% of depth); largest mean effect at mid-depth (layer 18): 0.77
+
+$ python scripts/analyze_size_control.py --results-dir results/exp2_cache_patching
+
+=== H2O-Lightning-4B (32 layers)
+skill     size       kept         read [95% CI]       absorb [95% CI]
+text      small   100/100    7.1 [  7.1,  7.2]      7.4 [  7.3,  7.5]
+text      large    92/100    7.2 [  7.1,  7.3]      7.8 [  7.6,  8.0]
+spatial   small    95/100   11.8 [ 11.6, 11.9]     11.5 [ 11.4, 11.6]
+spatial   large    99/100   11.3 [ 11.3, 11.4]     11.2 [ 11.1, 11.2]
+presence  small   100/100   14.6 [ 14.5, 14.6]     10.8 [ 10.8, 10.8]
+presence  large   100/100   13.4 [ 12.4, 14.1]     10.8 [ 10.8, 10.8]
+count     small    45/100   15.0 [ 14.9, 15.2]     14.9 [ 14.8, 15.0]
+count     large    65/100   14.9 [ 14.7, 15.0]     14.6 [ 14.5, 14.7]
+within-skill |large - small| read shift: {'text': 0.1, 'spatial': 0.4, 'presence': 1.1, 'count': 0.2}
+between-skill range of size-averaged read layers: 7.8 {'text': 7.1, 'spatial': 11.5, 'presence': 14.0, 'count': 14.9}
+
+=== Qwen3-VL-4B (base) (36 layers)
+skill     size       kept         read [95% CI]       absorb [95% CI]
+text      small    98/100    9.7 [  9.5, 10.1]     10.6 [ 10.2, 10.9]
+text      large   100/100    9.5 [  9.3,  9.8]     10.1 [  9.7, 10.6]
+spatial   small    75/100   17.6 [ 17.2, 18.0]     15.9 [ 15.7, 16.2]
+spatial   large    97/100   17.2 [ 16.9, 17.5]     15.6 [ 15.4, 15.7]
+presence  small   100/100   18.8 [ 18.7, 18.8]     13.1 [ 13.1, 13.1]
+presence  large   100/100   18.6 [ 18.6, 18.7]     13.1 [ 13.1, 13.1]
+count     small    23/100   18.4 [ 18.2, 18.6]     18.2 [ 17.3, 18.5]
+count     large    55/100   18.5 [ 18.4, 18.7]     18.1 [ 17.8, 18.3]
+within-skill |large - small| read shift: {'text': 0.2, 'spatial': 0.4, 'presence': 0.1, 'count': 0.1}
+between-skill range of size-averaged read layers: 9.1 {'text': 9.6, 'spatial': 17.4, 'presence': 18.7, 'count': 18.5}

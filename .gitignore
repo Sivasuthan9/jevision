@@ -1,0 +1,22 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Generated stimuli, extracted activations and logs (reproducible with scripts/)
+data/
+outputs/
+logs/
+*.pt
+*.safetensors
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store

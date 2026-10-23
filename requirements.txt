@@ -1,0 +1,11 @@
+# Exact versions the reported results were produced with (Python 3.12.3).
+# Install PyTorch for your CUDA version first (https://pytorch.org/get-started/locally/), then: pip install -r requirements.txt
+torch==2.13.0
+transformers==5.16.1
+huggingface_hub==1.29.0
+safetensors==0.8.0
+numpy==2.5.2
+scikit-learn==1.9.0
+pillow==12.3.0
+matplotlib==3.11.1
+pyyaml==6.0.3

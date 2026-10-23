@@ -1,0 +1,56 @@
+# Output of the shipped analysis scripts, run on the pilot's extracted features (2026-10-12 extraction; files renamed to the
+# repository's naming). The .pt feature files are not in the repository (about 4 GB); scripts/reproduce_experiment1.sh recreates them.
+
+$ python scripts/analyze_probes.py --data data/readout_main outputs/exp1/h2o-lightning-4b_main.pt outputs/exp1/qwen3.5-4b_main.pt
+
+===== outputs/exp1/h2o-lightning-4b_main.pt
+[count] n_test=400 readout=0.445 | best answer-position probe=0.608 (layer 32) | best image-token probe=0.338 (layer 8) | pixel-histogram probe=0.220 | shuffled-label probe=0.138 | chance=0.125
+   answer-position probe by layer: 0:0.10 4:0.21 8:0.25 12:0.29 16:0.48 20:0.56 24:0.59 28:0.57 32:0.61
+   image-token probe by layer:     0:0.31 4:0.34 8:0.34 12:0.30 16:0.30 20:0.32 24:0.26 28:0.30 32:0.33
+   logit-lens accuracy by layer:   0:0.13 2:0.12 4:0.12 6:0.14 8:0.13 10:0.13 12:0.13 14:0.13 16:0.13 18:0.13 20:0.15 22:0.25 24:0.32 26:0.37 28:0.37 30:0.37 32:0.45
+   decision depth (median first layer after which the argmax stays final): 30 of 32
+[text] n_test=400 readout=0.980 | best answer-position probe=1.000 (layer 12) | best image-token probe=0.855 (layer 4) | pixel-histogram probe=0.107 | shuffled-label probe=0.128 | chance=0.125
+   answer-position probe by layer: 0:0.11 4:0.51 8:0.92 12:1.00 16:1.00 20:1.00 24:1.00 28:1.00 32:1.00
+   image-token probe by layer:     0:0.79 4:0.85 8:0.75 12:0.51 16:0.41 20:0.70 24:0.68 28:0.73 32:0.85
+   logit-lens accuracy by layer:   0:0.11 2:0.12 4:0.12 6:0.13 8:0.13 10:0.13 12:0.13 14:0.13 16:0.13 18:0.11 20:0.31 22:0.36 24:0.98 26:0.98 28:0.98 30:0.98 32:0.98
+   decision depth (median first layer after which the argmax stays final): 24 of 32
+[readout vs generation, count] n=83 readout acc=0.506 generation acc=0.458 (readout-only right 9, generation-only right 5)
+[readout vs generation, text] n=117 readout acc=0.983 generation acc=0.855 (readout-only right 16, generation-only right 1)
+
+===== outputs/exp1/qwen3.5-4b_main.pt
+[count] n_test=400 readout=0.295 | best answer-position probe=0.530 (layer 28) | best image-token probe=0.333 (layer 8) | pixel-histogram probe=0.220 | shuffled-label probe=0.122 | chance=0.125
+   answer-position probe by layer: 0:0.10 4:0.24 8:0.19 12:0.26 16:0.33 20:0.51 24:0.52 28:0.53 32:0.51
+   image-token probe by layer:     0:0.31 4:0.33 8:0.33 12:0.28 16:0.31 20:0.29 24:0.28 28:0.31 32:0.29
+   logit-lens accuracy by layer:   0:0.13 2:0.12 4:0.12 6:0.12 8:0.12 10:0.14 12:0.13 14:0.13 16:0.13 18:0.14 20:0.21 22:0.24 24:0.24 26:0.27 28:0.31 30:0.31 32:0.32
+   decision depth (median first layer after which the argmax stays final): 27 of 32
+[text] n_test=400 readout=0.955 | best answer-position probe=1.000 (layer 16) | best image-token probe=0.895 (layer 32) | pixel-histogram probe=0.107 | shuffled-label probe=0.125 | chance=0.125
+   answer-position probe by layer: 0:0.11 4:0.51 8:0.74 12:0.99 16:1.00 20:1.00 24:1.00 28:1.00 32:1.00
+   image-token probe by layer:     0:0.79 4:0.87 8:0.77 12:0.51 16:0.42 20:0.71 24:0.64 28:0.73 32:0.90
+   logit-lens accuracy by layer:   0:0.11 2:0.12 4:0.12 6:0.13 8:0.12 10:0.13 12:0.13 14:0.13 16:0.13 18:0.12 20:0.22 22:0.47 24:0.95 26:0.86 28:0.96 30:0.97 32:0.96
+   decision depth (median first layer after which the argmax stays final): 24 of 32
+[readout vs generation, count] n=83 readout acc=0.277 generation acc=0.494 (readout-only right 7, generation-only right 25)
+[readout vs generation, text] n=117 readout acc=0.957 generation acc=0.855 (readout-only right 16, generation-only right 4)
+
+$ python scripts/analyze_readout_bias.py --meta <set>/items.json <features of that set>   (run once per stimulus set)
+outputs/exp1/qwen3.5-4b_main.pt count: readout acc 0.310 (test 0.295) | recalibrated logits 0.565 | signed error -1.17 (test -1.17) | acc by class [0.92, 0.56, 0.7, 0.01, 0.0, 0.29, 0.0, 0.0]
+outputs/exp1/qwen3.5-4b_main.pt text: readout acc 0.949 (test 0.955) | recalibrated logits 0.998 | signed error -0.31 (test -0.28) | acc by class [1.0, 0.95, 1.0, 0.99, 1.0, 0.99, 1.0, 0.66]
+outputs/exp1/h2o-lightning-4b_main.pt count: readout acc 0.455 (test 0.445) | recalibrated logits 0.652 | signed error -0.62 (test -0.64) | acc by class [0.88, 0.61, 0.85, 0.54, 0.51, 0.23, 0.02, 0.0]
+outputs/exp1/h2o-lightning-4b_main.pt text: readout acc 0.980 (test 0.980) | recalibrated logits 1.000 | signed error -0.07 (test -0.07) | acc by class [1.0, 0.93, 1.0, 1.0, 1.0, 0.99, 1.0, 0.92]
+outputs/exp1/qwen3.5-4b_text-hard.pt text: readout acc 0.395 (test 0.410) | recalibrated logits 0.623 | signed error -2.44 (test -2.47) | acc by class [0.99, 0.24, 0.4, 0.3, 0.41, 0.31, 0.5, 0.01]
+outputs/exp1/h2o-lightning-4b_text-hard.pt text: readout acc 0.400 (test 0.412) | recalibrated logits 0.728 | signed error -2.34 (test -2.38) | acc by class [1.0, 0.21, 0.33, 0.35, 0.32, 0.37, 0.5, 0.12]
+outputs/exp1/h2o-lightning-4b_count-words.pt count: readout acc 0.461 (test 0.448) | recalibrated logits 0.645 | signed error -0.62 (test -0.65) | acc by class [0.91, 0.59, 0.78, 0.66, 0.41, 0.29, 0.03, 0.02]
+outputs/exp1/h2o-lightning-4b_count-words-reversed.pt count: readout acc 0.431 (test 0.440) | recalibrated logits 0.627 | signed error -0.56 (test -0.54) | acc by class [0.86, 0.39, 0.75, 0.86, 0.44, 0.12, 0.03, 0.0]
+
+$ python scripts/analyze_random_codes.py --data data/readout_random_codes outputs/exp1/*_random-codes.pt
+outputs/exp1/h2o-lightning-4b_random-codes.pt: readout acc 0.750 (AUC 0.818) | threshold-recalibrated margin 0.738 | best hidden probe layer 32 0.742 (AUC 0.814) | says-yes rate 0.44
+   hidden probe by layer: 8:0.59 12:0.68 16:0.69 20:0.73 24:0.73 28:0.73 32:0.74
+   font 5px readout 0.54  recalibrated 0.56  hidden probe 0.62  n=133
+   font 6px readout 0.76  recalibrated 0.72  hidden probe 0.61  n=118
+   font 7px readout 0.82  recalibrated 0.81  hidden probe 0.84  n=131
+   font 8px readout 0.90  recalibrated 0.88  hidden probe 0.90  n=118
+outputs/exp1/qwen3.5-4b_random-codes.pt: readout acc 0.668 (AUC 0.776) | threshold-recalibrated margin 0.706 | best hidden probe layer 24 0.720 (AUC 0.787) | says-yes rate 0.68
+   hidden probe by layer: 8:0.53 12:0.62 16:0.68 20:0.70 24:0.72 28:0.71 32:0.69
+   font 5px readout 0.61  recalibrated 0.54  hidden probe 0.60  n=133
+   font 6px readout 0.62  recalibrated 0.68  hidden probe 0.64  n=118
+   font 7px readout 0.67  recalibrated 0.77  hidden probe 0.79  n=131
+   font 8px readout 0.78  recalibrated 0.85  hidden probe 0.86  n=118
